@@ -1,0 +1,159 @@
+# OpenPillars Messages Configuration
+# All messages support color codes (&a, &b, etc.) and hex colors (&#RRGGBB)
+# Placeholders: %player%, %players%, %max_players%, %time%, %killer%, %arena%
+
+prefix: "&8[&6OpenPillars&8] &r"
+
+# General Messages
+general:
+  no-permission: "&cYou don't have permission to do that!"
+  player-only: "&cThis command can only be used by players!"
+  invalid-args: "&cInvalid arguments! Usage: %usage%"
+  config-reloaded: "&aConfiguration reloaded successfully!"
+  unknown-command: "&cUnknown command. Use &e/pillars help &cfor a list of commands."
+
+# Game Messages
+game:
+  # Lobby/Waiting
+  player-joined: "&e%player% &7has joined! &8(&e%players%&8/&e%max_players%&8)"
+  player-left: "&e%player% &7has left! &8(&e%players%&8/&e%max_players%&8)"
+  waiting-for-players: "&7Waiting for more players... &8(&e%players%&8/&e%min_players%&8)"
+  
+  # Countdown
+  countdown-start: "&aGame starting in &e%time% &aseconds!"
+  countdown-tick: "&e%time%..."
+  countdown-cancelled: "&cNot enough players! Countdown cancelled."
+  
+  # Game Start
+  game-starting: "&6&l▶ &e&lGAME STARTING! &6&l◀"
+  game-started: "&aMay the pillars be ever in your favor!"
+  unfrozen: "&aYou are now unfrozen! &7Break blocks to get loot!"
+  
+  # During Game
+  block-generated: "&7A new block has spawned on your pillar!"
+  item-received: "&aYou received: &e%item%"
+  void-warning: "&c&lWARNING! &eYou're falling into the void!"
+  void-saved: "&aYou were saved by the grace period!"
+  
+  # Deaths
+  player-died: "&c%player% &7has been eliminated!"
+  player-died-void: "&c%player% &7fell into the void!"
+  player-killed: "&c%player% &7was killed by &e%killer%&7!"
+  
+  # Game End
+  game-winner: "&6&l★ &e&l%player% &6&lWINS! &6&l★"
+  game-over: "&cGame Over! &7Thanks for playing!"
+  game-draw: "&eThe game ended in a draw!"
+  
+  # Spectator
+  now-spectating: "&7You are now spectating the game."
+  spectating-player: "&7Now spectating: &e%player%"
+
+# Command Messages
+commands:
+  help-header: "&6&l═══════ &eOpenPillars Help &6&l═══════"
+  help-footer: "&6&l═══════════════════════════════"
+  help-join: "&e/pillars join &8- &7Join a game"
+  help-leave: "&e/pillars leave &8- &7Leave the current game"
+  help-start: "&e/pillars start &8- &7Force start the game"
+  help-stop: "&e/pillars stop &8- &7Stop the current game"
+  help-reload: "&e/pillars reload &8- &7Reload configuration"
+  help-setup: "&e/pillars setup &8- &7Setup a new arena"
+  
+  join-success: "&aYou have joined the game!"
+  join-fail-ingame: "&cYou are already in a game!"
+  join-fail-full: "&cThe game is full!"
+  join-fail-started: "&cThe game has already started!"
+  
+  leave-success: "&aYou have left the game."
+  leave-fail: "&cYou are not in a game!"
+  
+  start-success: "&aGame force-started!"
+  start-fail-notenough: "&cNot enough players to start!"
+  start-fail-running: "&cA game is already running!"
+  
+  stop-success: "&aGame stopped!"
+  stop-fail: "&cNo game is currently running!"
+
+# Arena Setup Messages
+setup:
+  mode-enabled: "&aSetup mode enabled. Click blocks to set positions."
+  mode-disabled: "&cSetup mode disabled."
+  position-set: "&aPosition &e%position% &aset at your location!"
+  spawn-added: "&aSpawn point &e#%number% &aadded!"
+  arena-saved: "&aArena &e%arena% &asaved successfully!"
+  arena-invalid: "&cArena configuration is incomplete!"
+
+# Scoreboard
+scoreboard:
+  title: "&6&lPILLARS"
+  lobby:
+    - "&7%date%"
+    - ""
+    - "&fMap: &a%arena%"
+    - "&fPlayers: &a%players%/%max_players%"
+    - ""
+    - "&fWaiting..."
+    - ""
+    - "&ewww.yourserver.com"
+  countdown:
+    - "&7%date%"
+    - ""
+    - "&fMap: &a%arena%"
+    - "&fPlayers: &a%players%/%max_players%"
+    - ""
+    - "&fStarting in: &a%time%s"
+    - ""
+    - "&ewww.yourserver.com"
+  ingame:
+    - "&7%date%"
+    - ""
+    - "&fTime: &a%time%"
+    - "&fPlayers: &a%alive%/%players%"
+    - ""
+    - "&fKills: &a%kills%"
+    - "&fBlocks: &a%blocks%"
+    - ""
+    - "&ewww.yourserver.com"
+  ending:
+    - "&7%date%"
+    - ""
+    - "&fWinner:"
+    - "&a%winner%"
+    - ""
+    - "&fKills: &a%winner_kills%"
+    - ""
+    - "&ewww.yourserver.com"
+
+# Action Bar Messages
+actionbar:
+  frozen: "&c&lFROZEN &8| &eGame starting in %time%s"
+  ingame: "&a%blocks% blocks &8| &e%kills% kills"
+  spectating: "&7Spectating: &e%player%"
+
+# Titles
+titles:
+  game-start:
+    title: "&6&lGO!"
+    subtitle: "&eBreak blocks to get loot!"
+    fade-in: 10
+    stay: 40
+    fade-out: 20
+  countdown:
+    title: "&e%time%"
+    subtitle: "&7Get ready..."
+    fade-in: 0
+    stay: 20
+    fade-out: 0
+  death:
+    title: "&c&lELIMINATED"
+    subtitle: "&7Better luck next time!"
+    fade-in: 10
+    stay: 60
+    fade-out: 20
+  winner:
+    title: "&6&l★ VICTORY ★"
+    subtitle: "&eYou are the last one standing!"
+    fade-in: 10
+    stay: 100
+    fade-out: 20

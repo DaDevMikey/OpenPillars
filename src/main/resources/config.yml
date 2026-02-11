@@ -1,0 +1,96 @@
+# OpenPillars Configuration
+# High-performance, cross-version Pillars of Fortune engine
+
+# General Settings
+settings:
+  # Debug mode - enables verbose logging
+  debug: false
+  
+  # Auto-save player data interval (in seconds)
+  auto-save-interval: 300
+
+# Game Settings
+game:
+  # Minimum players required to start
+  min-players: 2
+  
+  # Maximum players per game
+  max-players: 16
+  
+  # Countdown before game starts (in seconds)
+  countdown: 10
+  
+  # Game duration in minutes (0 = unlimited)
+  game-duration: 15
+  
+  # Grace period after falling into void (in seconds)
+  # Set to 0 for instant death, -1 for spectator mode
+  void-grace-period: 3
+  
+  # Starting Y level for pillars
+  pillar-start-y: 64
+  
+  # Height of each pillar at start
+  pillar-initial-height: 5
+  
+  # Distance between pillars
+  pillar-spacing: 10
+
+# Pillar Settings  
+pillar:
+  # Block generation interval (in ticks, 20 ticks = 1 second)
+  generation-interval: 40
+  
+  # Maximum pillar height
+  max-height: 50
+  
+  # Number of blocks generated per interval
+  blocks-per-interval: 1
+  
+  # Should blocks drop items when broken?
+  drop-items: true
+  
+  # Can players break blocks below them?
+  allow-self-destruction: true
+
+# Freeze Settings (Pre-game)
+freeze:
+  # Should players be frozen before game starts?
+  enabled: true
+  
+  # Allow players to look around while frozen
+  allow-look: true
+  
+  # Teleport player back to center if they try to move
+  strict-mode: true
+
+# World Settings
+world:
+  # World name for the game
+  world-name: "pillars_world"
+  
+  # Should the world be reset after each game?
+  reset-after-game: true
+  
+  # Void level (Y coordinate)
+  void-level: 0
+
+# Sound Settings
+sounds:
+  # Enable/disable sounds
+  enabled: true
+  
+  # Sound on game start
+  game-start: "ENTITY_ENDER_DRAGON_GROWL"
+  
+  # Sound on countdown tick
+  countdown-tick: "BLOCK_NOTE_BLOCK_PLING"
+  
+  # Sound on block break/loot
+  block-break: "ENTITY_ITEM_PICKUP"
+  
+  # Sound on player death
+  player-death: "ENTITY_WITHER_DEATH"
+  
+  # Sound on game win
+  game-win: "UI_TOAST_CHALLENGE_COMPLETE"

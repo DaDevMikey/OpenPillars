@@ -1,0 +1,46 @@
+name: OpenPillars
+version: ${project.version}
+main: com.openpillars.OpenPillars
+api-version: "1.21"
+description: A high-performance, cross-version Pillars of Fortune engine
+author: OpenPillars Team
+website: https://github.com/OpenPillars
+
+softdepend:
+  - PlaceholderAPI
+
+commands:
+  pillars:
+    description: Main command for OpenPillars
+    usage: /<command> <subcommand>
+    aliases: [op, pillar, pf]
+
+permissions:
+  openpillars.admin:
+    description: Full admin access to OpenPillars
+    default: op
+    children:
+      openpillars.command.reload: true
+      openpillars.command.setup: true
+      openpillars.command.start: true
+      openpillars.command.stop: true
+      openpillars.command.join: true
+      openpillars.command.leave: true
+  openpillars.command.reload:
+    description: Permission to reload configs
+    default: op
+  openpillars.command.setup:
+    description: Permission to setup arenas
+    default: op
+  openpillars.command.start:
+    description: Permission to start games
+    default: op
+  openpillars.command.stop:
+    description: Permission to stop games
+    default: op
+  openpillars.command.join:
+    description: Permission to join games
+    default: true
+  openpillars.command.leave:
+    description: Permission to leave games
+    default: true

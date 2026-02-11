@@ -1,0 +1,202 @@
+# OpenPillars Loot Configuration
+# Define what drops from pillar blocks
+# 
+# Each item has the following properties:
+#   material: The block/item type (uses XSeries for cross-version support)
+#   weight: How common this item is (higher = more common)
+#   amount: Number of items to give (can be a range like "1-3")
+#   name: Custom display name (optional, supports color codes)
+#   lore: Custom lore lines (optional, supports color codes)
+#   enchantments: List of enchantments in format "ENCHANT_NAME:level" (optional)
+#   nbt: Custom NBT data (optional, advanced)
+
+# Global drop chance (percentage chance ANY item will drop)
+global-drop-chance: 100
+
+# Loot Tables
+loot-tables:
+  # Standard pillar loot
+  standard-pillar:
+    # === COMMON TIER (70%+ weight) ===
+    - material: "DIRT"
+      weight: 100
+      amount: 16
+      
+    - material: "COBBLESTONE"
+      weight: 95
+      amount: 16
+      
+    - material: "OAK_PLANKS"
+      weight: 90
+      amount: 16
+      
+    - material: "STONE"
+      weight: 85
+      amount: "8-16"
+      
+    - material: "GRAVEL"
+      weight: 80
+      amount: 8
+    
+    # === UNCOMMON TIER (30-69 weight) ===
+    - material: "IRON_INGOT"
+      weight: 50
+      amount: "1-3"
+      
+    - material: "GOLD_INGOT"
+      weight: 40
+      amount: "1-2"
+      
+    - material: "LEATHER_CHESTPLATE"
+      weight: 35
+      amount: 1
+      
+    - material: "LEATHER_BOOTS"
+      weight: 35
+      amount: 1
+      
+    - material: "WOODEN_SWORD"
+      weight: 45
+      amount: 1
+      
+    - material: "BOW"
+      weight: 30
+      amount: 1
+      
+    - material: "ARROW"
+      weight: 55
+      amount: "8-16"
+      
+    - material: "COOKED_BEEF"
+      weight: 60
+      amount: "2-5"
+      
+    - material: "GOLDEN_APPLE"
+      weight: 25
+      amount: 1
+
+    # === RARE TIER (10-29 weight) ===
+    - material: "DIAMOND"
+      weight: 15
+      amount: "1-2"
+      
+    - material: "IRON_SWORD"
+      weight: 20
+      amount: 1
+      name: "&7Iron Blade"
+      
+    - material: "IRON_CHESTPLATE"
+      weight: 15
+      amount: 1
+      
+    - material: "IRON_HELMET"
+      weight: 18
+      amount: 1
+      
+    - material: "ENDER_PEARL"
+      weight: 12
+      amount: "1-2"
+      
+    - material: "FISHING_ROD"
+      weight: 20
+      amount: 1
+      
+    - material: "COBWEB"
+      weight: 25
+      amount: "2-4"
+
+    # === EPIC TIER (5-9 weight) ===
+    - material: "DIAMOND_SWORD"
+      weight: 5
+      amount: 1
+      name: "&bExcalibur"
+      lore:
+        - "&7A legendary blade"
+        - "&7forged in the pillars"
+      enchantments:
+        - "SHARPNESS:2"
+        
+    - material: "DIAMOND_CHESTPLATE"
+      weight: 5
+      amount: 1
+      
+    - material: "ENCHANTED_GOLDEN_APPLE"
+      weight: 6
+      amount: 1
+      
+    - material: "TOTEM_OF_UNDYING"
+      weight: 5
+      amount: 1
+      
+    - material: "TRIDENT"
+      weight: 5
+      amount: 1
+
+    # === LEGENDARY TIER (1-4 weight) ===
+    - material: "STICK"
+      weight: 1
+      amount: 1
+      name: "&6&lKnockback Stick"
+      lore:
+        - "&e&oYEET!"
+        - ""
+        - "&7Send your enemies"
+        - "&7flying off their pillar!"
+      enchantments:
+        - "KNOCKBACK:5"
+        
+    - material: "BOW"
+      weight: 2
+      amount: 1
+      name: "&c&lPillar Sniper"
+      lore:
+        - "&7One shot, one kill"
+      enchantments:
+        - "POWER:5"
+        - "PUNCH:2"
+        - "INFINITY:1"
+        
+    - material: "NETHERITE_SWORD"
+      weight: 1
+      amount: 1
+      name: "&d&lVoid Slayer"
+      lore:
+        - "&5The ultimate weapon"
+        - "&5from the void itself"
+      enchantments:
+        - "SHARPNESS:5"
+        - "FIRE_ASPECT:2"
+        - "SWEEPING_EDGE:3"
+
+  # Faster generation loot (mid-game boost)
+  boosted-pillar:
+    - material: "IRON_INGOT"
+      weight: 70
+      amount: "2-4"
+      
+    - material: "GOLD_INGOT"
+      weight: 60
+      amount: "1-3"
+      
+    - material: "DIAMOND"
+      weight: 30
+      amount: "1-2"
+      
+    - material: "GOLDEN_APPLE"
+      weight: 50
+      amount: "1-2"
+      
+    - material: "ENDER_PEARL"
+      weight: 40
+      amount: "1-3"
+
+# Time-based loot table switching
+# After X minutes, switch to a different loot table
+dynamic-loot:
+  enabled: true
+  switches:
+    - time: 5  # After 5 minutes
+      table: "boosted-pillar"
+    - time: 10 # After 10 minutes (final phase)
+      table: "standard-pillar"
+      modifier: 2.0  # Double all weights for rare items
