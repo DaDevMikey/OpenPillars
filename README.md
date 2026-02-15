@@ -5,7 +5,7 @@ A high-performance, cross-version **Pillars of Fortune** engine for Minecraft se
 ## Features
 
 ### No Cages - Seamless Start
-Unlike traditional pillar games, OpenPillars uses a **freeze mechanic** instead of cages. Players spawn on their pillars and can look around freely (high aura!) but can't move until the countdown ends. This creates a more immersive and modern experience.
+Unlike traditional pillar games, OpenPillars uses a **freeze mechanic** instead of cages. Players spawn on their pillars and can look around freely but can't move until the countdown ends. This creates a more immersive and modern experience.
 
 ### Cross-Version Support
 One JAR to rule them all. Using [XSeries](https://github.com/CryptoMorin/XSeries) for material mapping, OpenPillars works seamlessly from **1.8 to 1.21+** without any version-specific builds.
