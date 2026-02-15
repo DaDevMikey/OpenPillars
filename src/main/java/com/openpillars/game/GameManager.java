@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -87,6 +88,9 @@ public class GameManager {
             // Restore player state
             player.setGameMode(GameMode.SURVIVAL);
             player.getInventory().clear();
+            
+            // Teleport back to lobby/spawn
+            player.teleport(getLobbyLocation());
             
             int maxPlayers = plugin.getConfig().getInt("game.max-players", 16);
             String message = plugin.getFileHandler().getMessage("game.player-left",
@@ -172,7 +176,7 @@ public class GameManager {
                     for (UUID uuid : players.keySet()) {
                         Player player = Bukkit.getPlayer(uuid);
                         if (player != null) {
-                            player.sendTitle(title, subtitle, 0, 20, 0);
+                            FileHandler.sendTitle(player, title, subtitle, 0, 20, 0);
                             playSound(player, "countdown-tick");
                         }
                     }
@@ -202,7 +206,13 @@ public class GameManager {
         broadcastMessage(message);
         
         // Teleport players back to lobby
-        // TODO: Implement lobby teleport
+        Location lobbyLocation = getLobbyLocation();
+        for (UUID uuid : players.keySet()) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.teleport(lobbyLocation);
+            }
+        }
     }
 
     /**
@@ -273,7 +283,7 @@ public class GameManager {
                 // Show start title
                 String title = plugin.getFileHandler().getRawMessage("titles.game-start.title");
                 String subtitle = plugin.getFileHandler().getRawMessage("titles.game-start.subtitle");
-                player.sendTitle(title, subtitle, 10, 40, 20);
+                FileHandler.sendTitle(player, title, subtitle, 10, 40, 20);
                 
                 playSound(player, "game-start");
             }
@@ -359,7 +369,7 @@ public class GameManager {
             // Show winner title
             String title = plugin.getFileHandler().getRawMessage("titles.winner.title");
             String subtitle = plugin.getFileHandler().getRawMessage("titles.winner.subtitle");
-            winner.sendTitle(title, subtitle, 10, 100, 20);
+            FileHandler.sendTitle(winner, title, subtitle, 10, 100, 20);
             playSound(winner, "game-win");
         } else {
             String message = plugin.getFileHandler().getMessage("game.game-draw");
@@ -404,6 +414,7 @@ public class GameManager {
         pillarGenerator.clearAllPillars();
         
         // Reset all players
+        Location lobbyLocation = getLobbyLocation();
         for (UUID uuid : new HashSet<>(players.keySet())) {
             Player player = Bukkit.getPlayer(uuid);
             if (player != null) {
@@ -411,7 +422,7 @@ public class GameManager {
                 player.getInventory().clear();
                 player.setHealth(player.getMaxHealth());
                 player.setFoodLevel(20);
-                // TODO: Teleport to lobby
+                player.teleport(lobbyLocation);
             }
         }
         
@@ -477,18 +488,76 @@ public class GameManager {
                 Sound sound = Sound.valueOf(soundName);
                 player.playSound(player.getLocation(), sound, 1.0f, 1.0f);
             } catch (IllegalArgumentException e) {
-                plugin.getLogger().warning("Invalid sound: " + soundName);
+                // Try playing by string name (works on all versions with resource location)
+                try {
+                    player.playSound(player.getLocation(), soundName.toLowerCase().replace("_", "."), 1.0f, 1.0f);
+                } catch (Exception ex) {
+                    // Silently ignore - sound just won't play on this version
+                }
             }
         }
     }
 
     /**
-     * Gets the center location for the game
-     * @return The center location
+     * Gets the center location for the game.
+     * Resolves the world from config, falling back to the default world.
+     * Supports auto-generate mode (uses configured coordinates) or
+     * main-world mode (offsets far from spawn).
+     * @return The center location, never null
      */
     private Location getGameCenter() {
         String worldName = plugin.getConfig().getString("world.world-name", "world");
-        return new Location(Bukkit.getWorld(worldName), 0, 64, 0);
+        World world = Bukkit.getWorld(worldName);
+
+        // Fallback: try the default/first world if configured world doesn't exist
+        if (world == null) {
+            world = Bukkit.getWorlds().get(0); // main world is always index 0
+            plugin.getLogger().warning("World '" + worldName + "' not found! Falling back to '" + world.getName() + "'");
+        }
+
+        // If use-offset is true, generate far from lobby/spawn
+        boolean useOffset = plugin.getConfig().getBoolean("world.use-offset", false);
+        if (useOffset) {
+            int offsetDistance = plugin.getConfig().getInt("world.offset-distance", 10000);
+            Location spawn = world.getSpawnLocation();
+            return new Location(world, spawn.getX() + offsetDistance, 
+                    plugin.getConfig().getInt("game.pillar-start-y", 64), spawn.getZ());
+        }
+
+        // Otherwise use explicit center coordinates from config
+        double cx = plugin.getConfig().getDouble("world.center.x", 0);
+        double cy = plugin.getConfig().getDouble("world.center.y", 
+                plugin.getConfig().getInt("game.pillar-start-y", 64));
+        double cz = plugin.getConfig().getDouble("world.center.z", 0);
+
+        return new Location(world, cx, cy, cz);
+    }
+
+    /**
+     * Gets the lobby/spawn location to teleport players back to after a game.
+     * Checks for:
+     * 1. A configured lobby location in config
+     * 2. The main world's spawn location (hub)
+     * @return The lobby location
+     */
+    private Location getLobbyLocation() {
+        // Check for a configured lobby location
+        if (plugin.getConfig().contains("lobby.world")) {
+            String lobbyWorldName = plugin.getConfig().getString("lobby.world", "world");
+            World lobbyWorld = Bukkit.getWorld(lobbyWorldName);
+            if (lobbyWorld != null) {
+                double x = plugin.getConfig().getDouble("lobby.x", 0);
+                double y = plugin.getConfig().getDouble("lobby.y", 64);
+                double z = plugin.getConfig().getDouble("lobby.z", 0);
+                float yaw = (float) plugin.getConfig().getDouble("lobby.yaw", 0);
+                float pitch = (float) plugin.getConfig().getDouble("lobby.pitch", 0);
+                return new Location(lobbyWorld, x, y, z, yaw, pitch);
+            }
+        }
+        
+        // Fallback: use the main world's spawn point (works well for hub servers)
+        World mainWorld = Bukkit.getWorlds().get(0);
+        return mainWorld.getSpawnLocation();
     }
 
     /**

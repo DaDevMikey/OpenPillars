@@ -77,7 +77,7 @@ public class LootManager {
         
         // Use XMaterial for cross-version support
         Optional<XMaterial> xMaterial = XMaterial.matchXMaterial(materialName);
-        if (xMaterial.isEmpty()) {
+        if (!xMaterial.isPresent()) {
             plugin.getLogger().warning("Invalid material: " + materialName);
             return null;
         }

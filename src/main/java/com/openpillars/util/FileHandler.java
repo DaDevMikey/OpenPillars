@@ -255,4 +255,76 @@ public class FileHandler {
     public static String stripColor(String message) {
         return ChatColor.stripColor(colorize(message));
     }
+
+    /**
+     * Sends a title to a player with cross-version support (1.8+).
+     * On 1.8 the fade parameters are ignored (not supported).
+     * @param player  The player
+     * @param title   Title text (already colorized)
+     * @param subtitle Subtitle text (already colorized)
+     * @param fadeIn  Fade-in ticks
+     * @param stay    Stay ticks
+     * @param fadeOut Fade-out ticks
+     */
+    @SuppressWarnings("deprecation")
+    public static void sendTitle(org.bukkit.entity.Player player, String title, String subtitle,
+                                 int fadeIn, int stay, int fadeOut) {
+        try {
+            // Try the 1.9+ five-arg method first
+            player.getClass().getMethod("sendTitle", String.class, String.class,
+                    int.class, int.class, int.class)
+                    .invoke(player, title, subtitle, fadeIn, stay, fadeOut);
+        } catch (NoSuchMethodException e) {
+            // Fall back to the 1.8 two-arg method
+            try {
+                player.sendTitle(title, subtitle);
+            } catch (Exception ignored) { }
+        } catch (Exception ignored) { }
+    }
+
+    /**
+     * Sends an action bar message to a player, compatible with 1.8+.
+     * Uses NMS packets on 1.8, spigot API on 1.9+.
+     * @param player The player
+     * @param message The message (already color-coded)
+     */
+    public static void sendActionBar(org.bukkit.entity.Player player, String message) {
+        try {
+            // Try the Spigot API approach first (1.9+)
+            Class<?> chatMessageType = Class.forName("net.md_5.bungee.api.ChatMessageType");
+            Object actionBar = chatMessageType.getField("ACTION_BAR").get(null);
+            Class<?> textComponent = Class.forName("net.md_5.bungee.api.chat.TextComponent");
+            Object component = textComponent.getConstructor(String.class).newInstance(message);
+            Class<?> baseComponent = Class.forName("net.md_5.bungee.api.chat.BaseComponent");
+            Object spigot = player.getClass().getMethod("spigot").invoke(player);
+            // Try the sendMessage(ChatMessageType, BaseComponent) method
+            spigot.getClass().getMethod("sendMessage", chatMessageType, baseComponent)
+                    .invoke(spigot, actionBar, component);
+        } catch (Exception e) {
+            // Fallback: use NMS packets for 1.8
+            try {
+                String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName()
+                        .split("\\.")[3];
+                Class<?> chatSerializer = Class.forName(
+                        "net.minecraft.server." + version + ".IChatBaseComponent$ChatSerializer");
+                Object chatComponent = chatSerializer.getMethod("a", String.class)
+                        .invoke(null, "{\"text\":\"" + message.replace("\"", "\\\"")
+                        + "\"}");
+                Class<?> iChatBaseComponent = Class.forName(
+                        "net.minecraft.server." + version + ".IChatBaseComponent");
+                Class<?> packetClass = Class.forName(
+                        "net.minecraft.server." + version + ".PacketPlayOutChat");
+                Object packet = packetClass.getConstructor(iChatBaseComponent, byte.class)
+                        .newInstance(chatComponent, (byte) 2);
+                Object handle = player.getClass().getMethod("getHandle").invoke(player);
+                Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
+                playerConnection.getClass().getMethod("sendPacket",
+                        Class.forName("net.minecraft.server." + version + ".Packet"))
+                        .invoke(playerConnection, packet);
+            } catch (Exception ex) {
+                // Last resort: just send as chat
+                player.sendMessage(message);
+            }
+        }
+    }
 }

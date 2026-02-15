@@ -66,31 +66,63 @@ freeze:
 
 # World Settings
 world:
-  # World name for the game
-  world-name: "pillars_world"
+
+# Lobby / Hub Settings
+# If configured, players teleport here after a game ends or when they leave
+# If not configured, players teleport to the main world's spawn point
+# lobby:
+#   world: "world"
+#   x: 0
+#   y: 64
+#   z: 0
+#   yaw: 0
+#   pitch: 0
+
+# Arena World Settings
+  # World name for the game arena
+  # Set to "world" to use the main overworld, or a custom world name
+  # If the world doesn't exist the plugin falls back to the main world automatically
+  world-name: "world"
   
-  # Should the world be reset after each game?
+  # ---------- Option A: Explicit center ----------
+  # The center coordinates where pillars will generate around
+  # Players' pillars are arranged in a circle around this point
+  center:
+    x: 0
+    y: 64
+    z: 0
+  
+  # ---------- Option B: Offset from spawn ----------
+  # Set use-offset to true to auto-place the arena far from the lobby/spawn
+  # This is handy if you want everything in one world without manual coords
+  use-offset: false
+  offset-distance: 10000  # blocks away from spawn on the X axis
+  
+  # Should the arena area be reset (blocks cleared) after each game?
   reset-after-game: true
   
-  # Void level (Y coordinate)
+  # Void level (Y coordinate) - players below this are considered in the void
   void-level: 0
 
 # Sound Settings
+# Note: Sound names vary by version. The plugin will ignore invalid sounds gracefully.
+# 1.8 examples: ENDERDRAGON_GROWL, NOTE_PLING, ITEM_PICKUP, WITHER_DEATH, LEVEL_UP
+# 1.9+ examples: ENTITY_ENDER_DRAGON_GROWL, BLOCK_NOTE_BLOCK_PLING, etc.
 sounds:
   # Enable/disable sounds
   enabled: true
   
   # Sound on game start
-  game-start: "ENTITY_ENDER_DRAGON_GROWL"
+  game-start: "ENDERDRAGON_GROWL"
   
   # Sound on countdown tick
-  countdown-tick: "BLOCK_NOTE_BLOCK_PLING"
+  countdown-tick: "NOTE_PLING"
   
   # Sound on block break/loot
-  block-break: "ENTITY_ITEM_PICKUP"
+  block-break: "ITEM_PICKUP"
   
   # Sound on player death
-  player-death: "ENTITY_WITHER_DEATH"
+  player-death: "WITHER_DEATH"
   
   # Sound on game win
-  game-win: "UI_TOAST_CHALLENGE_COMPLETE"
+  game-win: "LEVEL_UP"

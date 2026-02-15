@@ -1,7 +1,6 @@
 name: OpenPillars
 version: ${project.version}
 main: com.openpillars.OpenPillars
-api-version: "1.21"
 description: A high-performance, cross-version Pillars of Fortune engine
 author: OpenPillars Team
 website: https://github.com/OpenPillars

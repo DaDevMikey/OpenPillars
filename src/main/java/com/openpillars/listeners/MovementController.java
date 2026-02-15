@@ -4,8 +4,7 @@ import com.openpillars.OpenPillars;
 import com.openpillars.game.GameManager;
 import com.openpillars.game.GamePlayer;
 import com.openpillars.game.GameState;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.openpillars.util.FileHandler;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -107,13 +106,7 @@ public class MovementController implements Listener {
         String message = plugin.getFileHandler().getRawMessage("actionbar.frozen",
                 "%time%", "?"); // Countdown would need to be passed from GameManager
         
-        try {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, 
-                    new TextComponent(message));
-        } catch (Exception e) {
-            // Fallback for older versions
-            player.sendMessage(message);
-        }
+        FileHandler.sendActionBar(player, message);
     }
 
     /**

@@ -53,8 +53,8 @@ public class PillarGenerator {
         Material baseMaterial = XMaterial.STONE.parseMaterial();
         if (baseMaterial == null) baseMaterial = Material.STONE;
         
-        // Generate initial pillar blocks
-        for (int y = 0; y < initialHeight; y++) {
+        // Generate the 1x1 pillar column (all layers except the top)
+        for (int y = 0; y < initialHeight - 1; y++) {
             Location blockLoc = baseLocation.clone().add(0, y, 0);
             Block block = world.getBlockAt(blockLoc);
             block.setType(baseMaterial);
@@ -63,7 +63,22 @@ public class PillarGenerator {
             blockOwners.put(normalizeLocation(blockLoc), playerId);
         }
         
+        // Generate a 3x3 platform on the topmost layer so the player
+        // has room to stand and doesn't get pushed off by new 1x1 growth
+        int topY = initialHeight - 1;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                Location blockLoc = baseLocation.clone().add(dx, topY, dz);
+                Block block = world.getBlockAt(blockLoc);
+                block.setType(baseMaterial);
+                
+                pillarData.addBlock(blockLoc);
+                blockOwners.put(normalizeLocation(blockLoc), playerId);
+            }
+        }
+        
         // Store the current top for future generation
+        // New 1x1 blocks grow from initialHeight upward (above the platform)
         pillarData.setCurrentHeight(initialHeight);
         
         // Store spawn location for the game player
@@ -106,6 +121,24 @@ public class PillarGenerator {
             Bukkit.getPluginManager().callEvent(event);
             
             if (event.isCancelled()) continue;
+            
+            // If the player is standing at or near the block placement height,
+            // push them up first so the block doesn't spawn inside them
+            Location playerLoc = player.getLocation();
+            if (playerLoc.getWorld() != null && playerLoc.getWorld().equals(world)) {
+                int playerBlockX = playerLoc.getBlockX();
+                int playerBlockZ = playerLoc.getBlockZ();
+                int blockX = blockLoc.getBlockX();
+                int blockZ = blockLoc.getBlockZ();
+                int blockY = blockLoc.getBlockY();
+                // Check if the player is on the same XZ column and their feet are at or inside the new block
+                if (playerBlockX == blockX && playerBlockZ == blockZ
+                        && playerLoc.getY() >= blockY && playerLoc.getY() < blockY + 1.0) {
+                    Location newPlayerLoc = player.getLocation().clone();
+                    newPlayerLoc.setY(blockY + 1.0);
+                    player.teleport(newPlayerLoc);
+                }
+            }
             
             // Place the block
             Block block = world.getBlockAt(blockLoc);

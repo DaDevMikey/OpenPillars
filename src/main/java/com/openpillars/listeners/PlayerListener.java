@@ -94,7 +94,7 @@ public class PlayerListener implements Listener {
         // Show death title
         String title = plugin.getFileHandler().getRawMessage("titles.death.title");
         String subtitle = plugin.getFileHandler().getRawMessage("titles.death.subtitle");
-        player.sendTitle(title, subtitle, 10, 60, 20);
+        com.openpillars.util.FileHandler.sendTitle(player, title, subtitle, 10, 60, 20);
         
         // Make spectator
         gameManager.makeSpectator(player);
